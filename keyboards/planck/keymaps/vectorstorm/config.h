@@ -14,6 +14,7 @@
 #define PLANCK_EZ_USER_LAYER_LIGHT_HANDLING 1
 
 #define RGB_DISABLE_WHEN_USB_SUSPENDED true
+#define USB_POLLING_INTERVAL_MS 1
 
 /*
   Set any config.h overrides for your specific keymap here.
