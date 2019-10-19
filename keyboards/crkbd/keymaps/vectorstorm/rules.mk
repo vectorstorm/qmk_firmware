@@ -9,6 +9,16 @@ SRC +=  ./lib/glcdfont.c \
         # ./lib/host_led_state_reader.c \
         # ./lib/timelogger.c \
 
+# Simple RGBlight functionality
+#RGBLIGHT_ENABLE = yes       # Enable WS2812 RGB underlight.
+
+# Fancy RGB Matrix functionity
 RGBLIGHT_ENABLE = no
 RGB_MATRIX_ENABLE = WS2812
+
+LINK_TIME_OPTIMIZATION_ENABLE = yes
+MOUSEKEY_ENABLE = no
+COMBO_ENABLE = no
+TAP_DANCE_ENABLE = no
+NKRO_ENABLE = yes
 
