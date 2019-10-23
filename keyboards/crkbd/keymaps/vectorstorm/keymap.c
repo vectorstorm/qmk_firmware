@@ -14,13 +14,15 @@ extern uint8_t is_master;
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
 #define _QWERTY 0
-#define _LOWER 1
-#define _RAISE 2
-#define _ADJUST 3
-#define _NAV 4
+#define _COLEMAK 1
+#define _LOWER 2
+#define _RAISE 3
+#define _ADJUST 4
+#define _NAV 5
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
+  COLEMAK,
   LOWER,
   RAISE,
   ADJUST,
@@ -41,6 +43,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     CTL_ESC,  KC_A,  KC_S,  KC_D,  KC_F,  KC_G,                   KC_H,  KC_J,  KC_K,  KC_L,KC_SCLN,KC_QUOT,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
     KC_LSFT,  KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                   KC_N,  KC_M,KC_COMM,KC_DOT,KC_SLSH,RSHFT_ENTER,\
+  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+                                KC_LGUI, LOWER,KC_SPC,   NAV, RAISE,KC_RALT \
+                              //`--------------------'  `--------------------'
+  ),
+
+  [_COLEMAK] = LAYOUT( \
+  //,-----------------------------------------.                ,-----------------------------------------.
+    KC_TAB,   KC_Q,  KC_W,  KC_F,  KC_P,  KC_G,                    KC_J,  KC_L,  KC_U,  KC_Y,KC_SCLN,KC_BSPC,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+    CTL_ESC,  KC_A,  KC_R,  KC_S,  KC_T,  KC_D,                   KC_H,  KC_N,  KC_E,  KC_I, KC_O, KC_QUOT,\
+  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+    KC_LSFT,  KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                   KC_K,  KC_M,KC_COMM,KC_DOT,KC_SLSH,RSHFT_ENTER,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
                                 KC_LGUI, LOWER,KC_SPC,   NAV, RAISE,KC_RALT \
                               //`--------------------'  `--------------------'
@@ -72,7 +86,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT( \
   //,-----------------------------------------.                ,-----------------------------------------.
-      RESET,RGBRST, KC_NO, KC_NO, KC_NO, KC_NO,                  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,\
+    QWERTY,RGBRST, KC_NO, KC_NO, KC_NO, KC_NO,                  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, COLEMAK,
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
     RGB_TOG,RGB_HUI,RGB_SAI,RGB_VAI,KC_NO,KC_NO,                 KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_NO, KC_NO,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
@@ -97,10 +111,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 int RGB_current_mode;
 
-void persistent_default_layer_set(uint16_t default_layer) {
-  eeconfig_update_default_layer(default_layer);
-  default_layer_set(default_layer);
-}
+/* void persistent_default_layer_set(uint16_t default_layer) { */
+/*   eeconfig_update_default_layer(default_layer); */
+/*   default_layer_set(default_layer); */
+/* } */
 
 // Setting ADJUST layer RGB back to default
 void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
@@ -124,14 +138,39 @@ void matrix_init_user(void) {
 //SSD1306 OLED update loop, make sure to add #define SSD1306OLED in config.h
 #ifdef SSD1306OLED
 
+char layer_state_str[24];
 // When add source files to SRC in rules.mk, you can use functions.
-const char *read_layer_state(void);
+const char *my_read_layer_state(void) {
+
+  switch (biton32(layer_state)) {
+  case _QWERTY:
+    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: QWERTY");
+    break;
+  case _COLEMAK:
+    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Colemak");
+    break;
+  case _RAISE:
+    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Raise");
+    break;
+  case _LOWER:
+    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Lower");
+    break;
+  case _ADJUST:
+    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Adjust");
+    break;
+  default:
+    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Undef-%ld", layer_state);
+  }
+
+  return layer_state_str;
+}
+
 const char *read_logo(void);
 void set_keylog(uint16_t keycode, keyrecord_t *record);
 const char *read_keylog(void);
 const char *read_keylogs(void);
 
-// const char *read_mode_icon(bool swap);
+/* const char *read_mode_icon(bool swap); */
 // const char *read_host_led_state(void);
 // void set_timelog(void);
 // const char *read_timelog(void);
@@ -143,10 +182,10 @@ void matrix_scan_user(void) {
 void matrix_render_user(struct CharacterMatrix *matrix) {
   if (is_master) {
     // If you want to change the display of OLED, you need to change here
-    matrix_write_ln(matrix, read_layer_state());
-    matrix_write_ln(matrix, read_keylog());
+    matrix_write_ln(matrix, my_read_layer_state());
+    /* matrix_write_ln(matrix, read_keylog()); */
     //matrix_write_ln(matrix, read_keylogs());
-    //matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
+    /* matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui)); */
     //matrix_write_ln(matrix, read_host_led_state());
     //matrix_write_ln(matrix, read_timelog());
   } else {
@@ -180,7 +219,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case QWERTY:
       if (record->event.pressed) {
-        persistent_default_layer_set(1UL<<_QWERTY);
+        default_layer_set(1UL<<_QWERTY);
+      }
+      return false;
+    case COLEMAK:
+      if (record->event.pressed) {
+        default_layer_set(1UL<<_COLEMAK);
       }
       return false;
     case LOWER:
@@ -229,3 +273,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
+
