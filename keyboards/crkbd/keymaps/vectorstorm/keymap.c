@@ -42,7 +42,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
     KC_LSFT,  KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                   KC_N,  KC_M,KC_COMM,KC_DOT,KC_SLSH,RSHFT_ENTER,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                KC_LGUI, LOWER,NAV,   KC_SPC, RAISE,KC_RALT \
+                                KC_LGUI, LOWER,KC_SPC,   NAV, RAISE,KC_RALT \
                               //`--------------------'  `--------------------'
   ),
 
@@ -54,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
 	 KC_F7, KC_F8, KC_F9, KC_F10,KC_F11,KC_F12,              KC_NO,KC_NONUS_HASH,KC_NONUS_BSLASH,KC_HOME,KC_END,KC_ENTER,
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                KC_LGUI, LOWER,NAV,   KC_SPC, RAISE,KC_RALT
+                                KC_LGUI, LOWER,KC_SPC,   NAV, RAISE,KC_RALT
                               //`--------------------'  `--------------------'
   ),
 
@@ -66,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
      KC_F7, KC_F8, KC_F9, KC_F10,KC_F11,KC_F12,                 KC_NO,KC_NONUS_HASH,KC_NONUS_BSLASH,KC_PGUP,KC_PGDOWN,KC_ENTER ,
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                KC_LGUI, LOWER,NAV,   KC_SPC, RAISE,KC_RALT \
+                                KC_LGUI, LOWER,KC_SPC,   NAV, RAISE,KC_RALT \
                               //`--------------------'  `--------------------'
   ),
 
@@ -78,7 +78,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
     RGB_MOD,RGB_HUD,RGB_SAD,RGB_VAD,KC_NO,KC_NO,                 KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                KC_LGUI, LOWER,NAV,   KC_SPC, RAISE,KC_RALT \
+                                KC_LGUI, LOWER,KC_SPC,   NAV, RAISE,KC_RALT \
                               //`--------------------'  `--------------------'
   ),
 
