@@ -16,14 +16,16 @@ extern uint8_t is_master;
 // entirely and just use numbers.
 #define _QWERTY 0
 #define _COLEMAK 1
-#define _LOWER 2
-#define _RAISE 3
-#define _ADJUST 4
-#define _NAV 5
+#define _GAME 2
+#define _LOWER 3
+#define _RAISE 4
+#define _ADJUST 5
+#define _NAV 6
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
   COLEMAK,
+  GAME,
   LOWER,
   RAISE,
   ADJUST,
@@ -61,6 +63,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //`--------------------'  `--------------------'
       ),
 
+  [_GAME] = LAYOUT( \
+      //,-----------------------------------------.                ,-----------------------------------------.
+      KC_TAB,  KC_Q,  KC_W,  KC_E,  KC_R,  KC_T,                   KC_Y,  KC_U,  KC_I,  KC_O,  KC_P,KC_BSPC,\
+      //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+      KC_ESC,  KC_A,  KC_S,  KC_D,  KC_F,  KC_G,                   KC_H,  KC_J,  KC_K,  KC_L,KC_SCLN,KC_QUOT,\
+      //|------+------+------+------+------+------|                |------+------+------+------+------+------|
+      KC_LSFT,  KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                   KC_N,  KC_M,KC_COMM,KC_DOT,KC_SLSH,KC_ENTER,\
+      //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
+      KC_LCTL, LOWER,KC_SPC,   KC_SPC, RAISE,KC_RALT \
+      //`--------------------'  `--------------------'
+      ),
+
   [_LOWER] = LAYOUT( \
       //,-----------------------------------------.                ,-----------------------------------------.
       KC_TILD,KC_EXLM,KC_AT,KC_HASH,KC_DLR,KC_PERC,              KC_CIRC,KC_AMPR,KC_ASTR,KC_LPRN,KC_RPRN,KC_BSPC,
@@ -87,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT( \
       //,-----------------------------------------.                ,-----------------------------------------.
-      QWERTY,RGBRST, KC_NO, KC_NO, KC_NO, KC_NO,                  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, COLEMAK,
+      QWERTY,RGBRST, KC_NO, KC_NO, KC_NO, KC_NO,                  KC_NO, KC_NO, KC_NO, KC_NO, GAME, COLEMAK,
       //|------+------+------+------+------+------|                |------+------+------+------+------+------|
       RGB_TOG,RGB_HUI,RGB_SAI,RGB_VAI,KC_NO,KC_NO,                 KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_NO, KC_NO,\
       //|------+------+------+------+------+------|                |------+------+------+------+------+------|
@@ -146,6 +160,7 @@ const char *my_read_layer_state(void) {
   switch (biton32(layer_state)) {
     case _QWERTY:
     case _COLEMAK:
+    case _GAME:
       switch (biton32(default_layer_state))
       {
         case _QWERTY:
@@ -153,6 +168,9 @@ const char *my_read_layer_state(void) {
           break;
         case _COLEMAK:
           snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Colemak");
+          break;
+        case _GAME:
+          snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Game");
           break;
         default:
           snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Undef-%ld", layer_state);
@@ -237,6 +255,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case COLEMAK:
       if (record->event.pressed) {
         default_layer_set(1UL<<_COLEMAK);
+      }
+      return false;
+    case GAME:
+      if (record->event.pressed) {
+        default_layer_set(1UL<<_GAME);
       }
       return false;
     case LOWER:
