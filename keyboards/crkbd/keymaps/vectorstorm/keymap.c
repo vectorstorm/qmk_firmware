@@ -1,12 +1,6 @@
 /* vim: set et ts=2 sw=2 */
 #include QMK_KEYBOARD_H
 
-#include "ssd1306.h"
-#ifdef PROTOCOL_LUFA
-#include "lufa.h"
-#include "split_util.h"
-#endif
-
 extern keymap_config_t keymap_config;
 
 // Each layer gets a name for readability, which is then used in the keymap matrix below.
@@ -20,6 +14,8 @@ extern keymap_config_t keymap_config;
 #define _RAISE 4
 #define _ADJUST 5
 #define _NAV 6
+
+#define OLED
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
@@ -127,11 +123,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 int RGB_current_mode;
 
-/* void persistent_default_layer_set(uint16_t default_layer) { */
-/*   eeconfig_update_default_layer(default_layer); */
-/*   default_layer_set(default_layer); */
-/* } */
-
 // Setting ADJUST layer RGB back to default
 void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
   if (IS_LAYER_ON(layer1) && IS_LAYER_ON(layer2)) {
@@ -141,7 +132,7 @@ void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
   }
 }
 
-#ifdef SSD1306OLED
+#ifdef OLED
 
 // When add source files to SRC in rules.mk, you can use functions.
 /* const char *my_read_layer_state(void) { */
@@ -191,10 +182,6 @@ void oled_render_layer_state(void) {
 	}
 }
 
-const char *read_logo(void);
-const char *read_keylog(void);
-const char *read_keylogs(void);
-
 char keylog_str[24] = {};
 
 const char code_to_name[60] = {
@@ -223,6 +210,7 @@ void oled_render_keylog(void) {
 	oled_write(keylog_str, false);
 }
 
+#if 0
 void render_bootmagic_status(bool status) {
     /* Show Ctrl-Gui Swap options */
     static const char PROGMEM logo[][2][3] = {
@@ -237,6 +225,7 @@ void render_bootmagic_status(bool status) {
         oled_write_ln_P(logo[1][1], false);
     }
 }
+#endif //0
 
 
 void oled_render_logo(void) {
@@ -253,6 +242,8 @@ void oled_task_user(void) {
 		oled_render_layer_state();
 		oled_render_keylog();
 	} else {
+		// hack to only set the logo once;  for whatever reason, this causes
+		// *major* problems on the non-master keyboard half.
 		static bool once=true;
 		if  ( once )
 		{
@@ -262,11 +253,11 @@ void oled_task_user(void) {
 	}
 }
 
-#endif//SSD1306OLED
+#endif//OLED
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	if (record->event.pressed) {
-#ifdef SSD1306OLED
+#ifdef OLED
 		set_keylog(keycode, record);
 #endif
 		// set_timelog();
