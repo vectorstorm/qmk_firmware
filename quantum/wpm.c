@@ -22,6 +22,9 @@
 // WPM Stuff
 static uint8_t  current_wpm = 0;
 static uint16_t wpm_timer   = 0;
+#ifndef WPM_UNFILTERED
+static uint16_t smoothing_timer = 0;
+#endif
 
 /* The WPM calculation works by specifying a certain number of 'periods' inside
  * a ring buffer, and we count the number of keypresses which occur in each of
@@ -36,8 +39,9 @@ static uint16_t wpm_timer   = 0;
  * which lets our WPM immediately reach the correct value even before a full
  * three second sampling buffer has been filled.
  */
-#define MAX_PERIODS (10)
+#define MAX_PERIODS (4)
 #define PERIOD_DURATION (1000 * WPM_SAMPLE_SECONDS / MAX_PERIODS)
+#define LATENCY (100)
 static int8_t  period_presses[MAX_PERIODS] = {0};
 static uint8_t current_period              = 0;
 static uint8_t periods                     = 1;
@@ -103,22 +107,19 @@ void update_wpm(uint16_t keycode) {
 }
 
 void decay_wpm(void) {
-    int presses = period_presses[0];
-    for (int i = 1; i < periods; i++) {
+    uint32_t presses = period_presses[0];
+    for (int i = 1; i <= periods; i++) {
         presses += period_presses[i];
     }
-    int wpm_now = (60000 * presses) / (periods * PERIOD_DURATION * WPM_ESTIMATED_WORD_SIZE);
-    int elapsed = timer_elapsed(wpm_timer);
+    int32_t elapsed = timer_elapsed(wpm_timer);
+	uint32_t duration = (((periods) * PERIOD_DURATION) + elapsed);
+    uint32_t wpm_now = (60000 * presses) / (duration * WPM_ESTIMATED_WORD_SIZE);
+	wpm_now = (wpm_now > 240) ? 240 : wpm_now;
 
     if (elapsed > PERIOD_DURATION) {
-#ifndef WPM_UNFILTERED
-        prev_wpm = current_wpm;
-        next_wpm = wpm_now;
-#endif
-
         current_period                 = (current_period + 1) % MAX_PERIODS;
         period_presses[current_period] = 0;
-        periods                        = (periods < MAX_PERIODS) ? periods + 1 : MAX_PERIODS;
+        periods                        = (periods < MAX_PERIODS-1) ? periods + 1 : MAX_PERIODS-1;
         elapsed                        = 0;
         /* if (wpm_timer == 0) { */
         wpm_timer = timer_read();
@@ -127,15 +128,23 @@ void decay_wpm(void) {
         /* } */
     }
 
+
 #if defined WPM_LAUNCH_CONTROL
     if (presses == 0) {
         current_period = 0;
-        periods        = 1;
+        periods        = 0;
     }
 #endif  // WPM_LAUNCH_CONTROL
 
 #ifndef WPM_UNFILTERED
-    current_wpm = prev_wpm + (elapsed * (next_wpm - prev_wpm) / PERIOD_DURATION);
+    int32_t latency = timer_elapsed(smoothing_timer);
+	if ( latency > LATENCY ) {
+		smoothing_timer = timer_read();
+        prev_wpm = current_wpm;
+        next_wpm = wpm_now;
+	}
+
+    current_wpm = prev_wpm + (latency * ((int)next_wpm - (int)prev_wpm) / LATENCY);
 #else
     current_wpm = wpm_now;
 #endif

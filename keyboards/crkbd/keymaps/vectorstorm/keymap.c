@@ -254,7 +254,7 @@ uint32_t anim_sleep         = 0;
 uint8_t  current_idle_frame = 0;
 // uint8_t current_prep_frame = 0; // uncomment if PREP_FRAMES >1
 uint8_t current_tap_frame = 0;
-int16_t anim_frame_duration = ANIM_FRAME_DURATION;
+uint32_t anim_frame_duration = ANIM_FRAME_DURATION;
 
 static void draw_frame(const unsigned char* frameData) {
 #ifdef RLE
