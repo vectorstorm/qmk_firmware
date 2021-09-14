@@ -128,7 +128,7 @@ void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
   }
 }
 
-#ifdef OLED
+#ifdef OLED_ENABLE
 
 // When add source files to SRC in rules.mk, you can use functions.
 /* const char *my_read_layer_state(void) { */
