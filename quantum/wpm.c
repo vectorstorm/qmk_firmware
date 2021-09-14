@@ -21,9 +21,9 @@
 
 // WPM Stuff
 static uint8_t  current_wpm = 0;
-static uint16_t wpm_timer   = 0;
+static uint32_t wpm_timer   = 0;
 #ifndef WPM_UNFILTERED
-static uint16_t smoothing_timer = 0;
+static uint32_t smoothing_timer = 0;
 #endif
 
 /* The WPM calculation works by specifying a certain number of 'periods' inside
@@ -39,7 +39,7 @@ static uint16_t smoothing_timer = 0;
  * which lets our WPM immediately reach the correct value even before a full
  * three second sampling buffer has been filled.
  */
-#define MAX_PERIODS (100)
+#define MAX_PERIODS (WPM_SAMPLE_PERIODS)
 #define PERIOD_DURATION (1000 * WPM_SAMPLE_SECONDS / MAX_PERIODS)
 #define LATENCY (100)
 static int8_t  period_presses[MAX_PERIODS] = {0};
@@ -127,12 +127,15 @@ void decay_wpm(void) {
         /*     wpm_timer += PERIOD_DURATION; */
         /* } */
     }
+	if ( presses < 2 ) // don't guess high WPM based on a single keypress.
+		wpm_now = 0;
 
 
 #if defined WPM_LAUNCH_CONTROL
     if (presses == 0) {
         current_period = 0;
         periods        = 0;
+		wpm_now = 0;
     }
 #endif  // WPM_LAUNCH_CONTROL
 
