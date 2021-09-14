@@ -39,7 +39,7 @@ static uint16_t smoothing_timer = 0;
  * which lets our WPM immediately reach the correct value even before a full
  * three second sampling buffer has been filled.
  */
-#define MAX_PERIODS (4)
+#define MAX_PERIODS (100)
 #define PERIOD_DURATION (1000 * WPM_SAMPLE_SECONDS / MAX_PERIODS)
 #define LATENCY (100)
 static int8_t  period_presses[MAX_PERIODS] = {0};
@@ -111,7 +111,7 @@ void decay_wpm(void) {
     for (int i = 1; i <= periods; i++) {
         presses += period_presses[i];
     }
-    int32_t elapsed = timer_elapsed(wpm_timer);
+    int32_t elapsed = timer_elapsed32(wpm_timer);
 	uint32_t duration = (((periods) * PERIOD_DURATION) + elapsed);
     uint32_t wpm_now = (60000 * presses) / (duration * WPM_ESTIMATED_WORD_SIZE);
 	wpm_now = (wpm_now > 240) ? 240 : wpm_now;
@@ -122,7 +122,7 @@ void decay_wpm(void) {
         periods                        = (periods < MAX_PERIODS-1) ? periods + 1 : MAX_PERIODS-1;
         elapsed                        = 0;
         /* if (wpm_timer == 0) { */
-        wpm_timer = timer_read();
+        wpm_timer = timer_read32();
         /* } else { */
         /*     wpm_timer += PERIOD_DURATION; */
         /* } */
@@ -137,9 +137,9 @@ void decay_wpm(void) {
 #endif  // WPM_LAUNCH_CONTROL
 
 #ifndef WPM_UNFILTERED
-    int32_t latency = timer_elapsed(smoothing_timer);
+    int32_t latency = timer_elapsed32(smoothing_timer);
 	if ( latency > LATENCY ) {
-		smoothing_timer = timer_read();
+		smoothing_timer = timer_read32();
         prev_wpm = current_wpm;
         next_wpm = wpm_now;
 	}
