@@ -31,9 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PERMISSIVE_HOLD
 #undef IGNORE_MOD_TAP_INTERRUPT
 #define USB_POLLING_INTERVAL_MS 1
-// #define WPM_UNFILTERED
-//#define WPM_ESTIMATED_WORD_SIZE 6
-//#define WPM_SAMPLE_SECONDS 4
+#define WPM_UNFILTERED
+#define WPM_ESTIMATED_WORD_SIZE 6
+#define WPM_SAMPLE_SECONDS 2
 // #define WPM_SAMPLE_SECONDS 10
 #define WPM_LAUNCH_CONTROL
 #define SPLIT_WPM_ENABLE

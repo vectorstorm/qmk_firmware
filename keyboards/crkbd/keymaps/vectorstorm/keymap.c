@@ -13,8 +13,6 @@
 #define _ADJUST 5
 #define _NAV 6
 
-#define OLED
-
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
   COLEMAK,
@@ -224,7 +222,7 @@ void oled_render_layer_state(void) {
 /* 	} */
 /* } */
 
-/* #define BONGO */
+#define BONGO
 #define RLE
 
 #ifdef BONGO
@@ -396,16 +394,16 @@ void oled_render_logo(void) {
 // Used to draw on to the oled screen
 void oled_task_user(void) {
 	if (is_keyboard_master()) {
-		/* oled_render_logo(); */
+		oled_render_logo();
 		/* oled_render_layer_state(); */
-		uint8_t n = get_current_wpm();
-		char    wpm_counter[4];
-		wpm_counter[3] = '\0';
-		wpm_counter[2] = '0' + n % 10;
-		wpm_counter[1] = (n /= 10) % 10 ? '0' + (n) % 10 : (n / 10) % 10 ? '0' : ' ';
-		wpm_counter[0] = n / 10 ? '0' + n / 10 : ' ';
-		oled_write_P(PSTR("WPM:"), false);
-		oled_write(wpm_counter, false);
+		/* uint8_t n = get_current_wpm(); */
+		/* char    wpm_counter[4]; */
+		/* wpm_counter[3] = '\0'; */
+		/* wpm_counter[2] = '0' + n % 10; */
+		/* wpm_counter[1] = (n /= 10) % 10 ? '0' + (n) % 10 : (n / 10) % 10 ? '0' : ' '; */
+		/* wpm_counter[0] = n / 10 ? '0' + n / 10 : ' '; */
+		/* oled_write_P(PSTR("WPM:"), false); */
+		/* oled_write(wpm_counter, false); */
 		/* oled_render_keylog(); */
 	}
 	else
