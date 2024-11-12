@@ -76,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //|------+------+------+------+------+------|                |------+------+------+------+------+------|
       KC_F7, KC_F8, KC_F9, KC_F10,KC_F11,KC_F12,              KC_NO,KC_NONUS_HASH,KC_NONUS_BSLASH,KC_HOME,KC_END,KC_ENTER,
       //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-      KC_LGUI, LOWER,NAV,   KC_SPC, RAISE,KC_RALT
+      KC_LALT, LOWER,NAV,   KC_SPC, RAISE,KC_RALT
       //`--------------------'  `--------------------'
       ),
 
@@ -303,15 +303,16 @@ static void render_anim(void) {
 
     // assumes 1 frame prep stage
 	void animation_phase(void) {
+
+		// [TODO] Make all of this more configurable and less ugly
 		anim_frame_duration = ANIM_FRAME_DURATION;
+
 		if (get_current_wpm() <= IDLE_SPEED) {
 			current_idle_frame = (current_idle_frame + 1) % IDLE_FRAMES;
-			/* draw_frame(idle[abs((IDLE_FRAMES - 1) - current_idle_frame)]); */
 			draw_frame(idle[current_idle_frame]);
 		}
 		if (get_current_wpm() > IDLE_SPEED && get_current_wpm() < TAP_SPEED) {
-			// oled_write_raw_P(prep[abs((PREP_FRAMES-1)-current_prep_frame)], ANIM_SIZE); // uncomment if IDLE_FRAMES >1
-			draw_frame(prep[0]);  // remove if IDLE_FRAMES >1
+			draw_frame(prep[0]);
 		}
 		if (get_current_wpm() >= TAP_SPEED) {
 			current_tap_frame = (current_tap_frame + 1) % TAP_FRAMES;
