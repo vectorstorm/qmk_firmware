@@ -28,7 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define MASTER_RIGHT
 // #define EE_HANDS
 
-#define PERMISSIVE_HOLD
+// #define PERMISSIVE_HOLD
+#define HOLD_ON_OTHER_KEY_PRESS
 #undef IGNORE_MOD_TAP_INTERRUPT
 #define USB_POLLING_INTERVAL_MS 1
 #define WPM_UNFILTERED
