@@ -92,6 +92,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       //`--------------------'  `--------------------'
       ),
 
+#define RGB_TOG QK_RGB_MATRIX_TOGGLE
+#define RGB_MOD QK_RGB_MATRIX_MODE_NEXT
+#define RGB_HUI QK_RGB_MATRIX_HUE_UP
+#define RGB_HUD QK_RGB_MATRIX_HUE_DOWN
+#define RGB_SAI QK_RGB_MATRIX_SATURATION_UP
+#define RGB_SAD QK_RGB_MATRIX_SATURATION_DOWN
+#define RGB_VAI QK_RGB_MATRIX_VALUE_UP
+#define RGB_VAD QK_RGB_MATRIX_VALUE_DOWN
+
   [_ADJUST] = LAYOUT( \
       //,-----------------------------------------.                ,-----------------------------------------.
       QWERTY,RGBRST, KC_NO, KC_NO, KC_NO, KC_NO,                  KC_NO, KC_NO, KC_NO, KC_NO, GAME, COLEMAK,
