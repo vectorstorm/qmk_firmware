@@ -146,11 +146,31 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return rotation;
 }
 
-#if 1
+/* const char* get_layer_name_string(layer_state_t state) { */
+/* 	switch ( get_highest_layer(state) ) */
+/* 	{ */
+/* 		case _QWERTY: */
+/* 			return "QWERTY"; */
+/* 		case _COLEMAK: */
+/* 			return "Colemak"; */
+/* 		case _GAME: */
+/* 			return "Game"; */
+/* 		case _LOWER: */
+/* 			return "Lower"; */
+/* 		case _RAISE: */
+/* 			return "Raise"; */
+/* 		case _ADJUST: */
+/* 			return "Adjust"; */
+/* 		case _NAV: */
+/* 			return "Nav"; */
+/* 	} */
+/* 	return "Unknown"; */
+/* } */
+
 void oled_render_layer_state(void) {
 
     oled_write_P(PSTR("Layer: "), false);
-	static const PROGMEM char layerNam[][7] =
+	static const PROGMEM char layerNam[][8] =
 	{
 		"QWERTY",
 		"Colemak",
@@ -164,36 +184,46 @@ void oled_render_layer_state(void) {
 	int layer = biton32(layer_state);
 	if ( layer > _NAV )
 		layer = 7;
+	if ( layer == 0 )
+		layer = biton32(default_layer_state);
+
 	oled_write_P(layerNam[layer],false);
+	/* static char layer_state_buffer[11] = {0}; */
+	/* if ( oldState != default_layer_state ) { */
+	/* 	oldState = default_layer_state; */
+	/* } */
+    /*  */
+	/* oled_write_P(PSTR( get_layer_name_string( default_layer_state ) ), false); */
+	oled_render_dirty(true);
 }
 
-/* char keylog_str[24] = {}; */
-/*  */
-/* const char code_to_name[60] = { */
-/*     ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f', */
-/*     'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', */
-/*     'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', */
-/*     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', */
-/*     'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\', */
-/*     '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '}; */
-/*  */
-/* void set_keylog(uint16_t keycode, keyrecord_t *record) { */
-/* 	char name = ' '; */
-/* 	if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) || */
-/* 			(keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX)) { keycode = keycode & 0xFF; } */
-/* 	if (keycode < 60) { */
-/* 		name = code_to_name[keycode]; */
-/* 	} */
-/*  */
-/* 	// update keylog */
-/* 	snprintf(keylog_str, sizeof(keylog_str), "%dx%d, k%2d : %c", */
-/* 			record->event.key.row, record->event.key.col, */
-/* 			keycode, name); */
-/* } */
+char keylog_str[24] = {};
 
-/* void oled_render_keylog(void) { */
-/* 	oled_write(keylog_str, false); */
-/* } */
+const char code_to_name[60] = {
+    ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f',
+    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+    'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\',
+    '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '};
+
+void set_keylog(uint16_t keycode, keyrecord_t *record) {
+	char name = ' ';
+	if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) ||
+			(keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX)) { keycode = keycode & 0xFF; }
+	if (keycode < 60) {
+		name = code_to_name[keycode];
+	}
+
+	// update keylog
+	snprintf(keylog_str, sizeof(keylog_str), "%dx%d, k%2d : %c",
+			record->event.key.row, record->event.key.col,
+			keycode, name);
+}
+
+void oled_render_keylog(void) {
+	oled_write(keylog_str, false);
+}
 
 /* void render_bootmagic_status(bool status) { */
 /*     #<{(| Show Ctrl-Gui Swap options |)}># */
@@ -209,7 +239,6 @@ void oled_render_layer_state(void) {
 /*         oled_write_ln_P(logo[1][1], false); */
 /*     } */
 /* } */
-#endif //0
 
 
 /*  */
@@ -365,7 +394,10 @@ void oled_render_logo(void) {
 // Used to draw on to the oled screen
 bool oled_task_user(void) {
 	if (is_keyboard_master()) {
-		oled_render_logo();
+		/* oled_render_logo(); */
+		oled_clear();
+		oled_render_layer_state();
+		/* oled_render_keylog(); */
 	}
 	else
 	{
@@ -384,7 +416,7 @@ bool oled_task_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	if (record->event.pressed) {
 #ifdef OLED
-		/* set_keylog(keycode, record); */
+		set_keylog(keycode, record);
 #endif
 		// set_timelog();
 	}
