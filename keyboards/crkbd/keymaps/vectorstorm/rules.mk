@@ -10,7 +10,7 @@ MOUSEKEY_ENABLE = no
 JOYSTICK_ENABLE = no
 
 # Important:  Set EXTRAKEY to false or we'll be detected as a joystick!
-EXTRAKEY_ENABLE = no
+EXTRAKEY_ENABLE = yes
 
 CONSOLE_ENABLE = no
 RAW_ENABLE = no
