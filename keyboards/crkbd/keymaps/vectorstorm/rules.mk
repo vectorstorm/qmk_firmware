@@ -5,7 +5,16 @@ OLED_DRIVER_ENABLE = yes
 OLED_ENABLE = yes
 
 LTO_ENABLE = yes
+
 MOUSEKEY_ENABLE = no
+JOYSTICK_ENABLE = no
+
+# Important:  Set EXTRAKEY to false or we'll be detected as a joystick!
+EXTRAKEY_ENABLE = no
+
+CONSOLE_ENABLE = no
+RAW_ENABLE = no
+VIRTSER_ENABLE = no
 COMBO_ENABLE = no
 TAP_DANCE_ENABLE = no
 CONSOLE_ENABLE = no
@@ -13,6 +22,8 @@ COMMAND_ENABLE = no
 AUDIO_ENABLE = no
 MIDI_ENABLE = no
 NKRO_ENABLE = yes
+
+SHARED_EP_ENABLE = yes
 WPM_ENABLE = yes
 
 # EXTRAFLAGS += -flto
